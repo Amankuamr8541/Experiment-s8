@@ -1,19 +1,28 @@
 
-import joblib
-import pandas as pd
+import pickle
+from flask import Flask, request, jsonify
+from prometheus_flask_exporter import PrometheusMetrics
 
-model = joblib.load("Iris_Model.pkl")
+app = Flask(__name__)
 
-sample = pd.DataFrame(
-    [[1.3, 3.4, 4.2, 3.4]],
-    columns=[
-        "SepalLengthCm",
-        "SepalWidthCm",
-        "PetalLengthCm",
-        "PetalWidthCm"
-    ]
-)
+# Enable Prometheus metrics
+metrics = PrometheusMetrics(app)
 
-prediction = model.predict(sample)
 
-print("Prediction of the sample is:", prediction[0])
+@app.route("/")
+def home():
+    return jsonify({"message": "app is running"})
+
+
+@app.route("/health")
+def health():
+    return jsonify({"message": "app is healthy"})
+
+
+@app.route("/predict", methods=["GET", "POST"])
+def predict():
+    return jsonify({"message": "Prediction endpoint is working"})
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
